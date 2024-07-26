@@ -2,7 +2,7 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('./connection');
 
-const FormStart = sequelize.define('User', {
+const FormStart = sequelize.define('FormStart', {
   data: {
     type: DataTypes.DATE,
     allowNull: false,

@@ -2,8 +2,7 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-
-const SECRET = process.env.JWT_SECRET
+const SECRET = process.env.JWT_SECRET;
 
 class LoginRouter {
   async signIn(req, res) {
@@ -28,17 +27,11 @@ class LoginRouter {
           login: user.login,
           email: user.email,
         },
-        process.env.JWT_SECRET,
+        SECRET, // Usar a constante SECRET
         { expiresIn: process.env.JWT_EXPIRES_IN }
       );
 
-      res.status(200).json({
-        statusCode: 200,
-        message: "Login bem-sucedido",
-        data: {
-          token,
-        },
-      });
+      res.status(200).json({ token }); // Retornar o token com status 200
     } catch (error) {
       res.status(500).json({ message: "Erro interno do servidor", error });
     }
@@ -47,7 +40,7 @@ class LoginRouter {
 
 const verificarToken = (req, res, next) => {
   const tokenHeader = req.headers["authorization"];
-  const token = tokenHeader && tokenHeader.slipt(" ")[1];
+  const token = tokenHeader && tokenHeader.split(" ")[1]; // Correção aqui
 
   if (!token) {
     return res.status(401).json({
@@ -57,15 +50,15 @@ const verificarToken = (req, res, next) => {
   }
 
   try {
-    jwt.verify(token, SECRET )
+    jwt.verify(token, SECRET);
     next();
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      statusCode: 500,
-      message: "Token não valido",
+    res.status(401).json({ // Alterei o status de 500 para 401 para refletir que o token é inválido
+      statusCode: 401,
+      message: "Token não válido",
     });
   }
 };
 
-module.exports = {LoginRouter, verificarToken };
+module.exports = { LoginRouter, verificarToken };

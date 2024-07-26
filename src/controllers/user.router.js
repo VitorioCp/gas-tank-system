@@ -3,9 +3,6 @@ const User = require("../models/User");
 class UserController {
     async create(req, res) {
       const { email, login, password } = req.body;
-    
-      
-
       // Verificar se o e-mail já existe
       const emailExist = await User.findOne({ where: { email } });
   
