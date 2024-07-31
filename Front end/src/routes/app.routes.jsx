@@ -18,8 +18,6 @@ export function AppRoutes({ handleLogin }) {
 export function AuthenticatedRoutes() {
   return (
     <Routes>
-      <Route path="/cashstart" element={<CashStart />} />
-      <Route path="/caixa" element={<Main />} />
       <Route path="/dashboard" element={<Dashboard/>}/>
     </Routes>
   );

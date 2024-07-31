@@ -29,6 +29,10 @@ router.post("/sell", verificarToken, (req, res) =>
   sellController.create(req, res)
 );
 
+router.get("/sell", verificarToken, (req, res) =>
+  sellController.getAll(req, res)
+);
+
 //verify-token
 
 router.get("/verify-token", verificarToken, (req, res) => {

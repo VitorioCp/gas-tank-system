@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react"; // Importar useEffect
 import { FaSignOutAlt } from "react-icons/fa";
 import {
   Container,
@@ -33,7 +33,23 @@ import {
 } from "./styles";
 import { useNavigate } from "react-router-dom";
 import { Flex } from "../Main/styles";
-import  axios from "axios";
+import axios from "axios";
+import { TotaGas } from "../../components/TotaGas"; // Importar a função TotaGas
+
+// Configuração do Axios para incluir token
+const api = axios.create({
+  baseURL: 'http://localhost:3333',
+});
+
+api.interceptors.request.use(config => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+}, error => {
+  return Promise.reject(error);
+});
 
 export const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -43,33 +59,48 @@ export const Dashboard = () => {
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState("");
   const [editingNoteIndex, setEditingNoteIndex] = useState(null);
+  const [totalGas, setTotalGas] = useState(0); // Estado para armazenar o total de gás
+  const [loading, setLoading] = useState(true); // Estado para controle de loading
   const navigate = useNavigate();
+
+  const fetchTotalGas = async () => {
+    try {
+      const result = await TotaGas(); // Chama a função TotaGas
+      setTotalGas(result); // Armazena o resultado no estado
+    } catch (error) {
+      console.error("Erro ao recuperar o total de gás:", error);
+    } finally {
+      setLoading(false); // Define loading como false após a chamada
+    }
+  };
+
+  useEffect(() => {
+    fetchTotalGas(); // Chama a função para buscar o total de gás
+  }, []); // Executa apenas uma vez após a montagem do componente
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
 
-  const handleCloseModal = async () => {
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     try {
-      const response = await axios.post("http://localhost:3333/sell", {
+      const response = await api.post("/sell", {
         paymentMethod,
         quantity,
         observation,
       });
-      console.log("enviado com sucesso", response);
+      console.log("Enviado com sucesso", response);
+
+      // Recarregar o total de gás após uma nova venda
+      await fetchTotalGas();
     } catch (error) {
       console.error("Não foi possível enviar para o servidor", error);
     }
-    setIsModalOpen(false);
-  };
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    console.log("Venda adicionada:", {
-      quantity,
-      paymentMethod,
-      observation,
-    });
     setIsModalOpen(false);
   };
 
@@ -136,7 +167,7 @@ export const Dashboard = () => {
         <SalesSection>
           <SalesInfo>
             <SalesTitle>Total de Gás Vendido</SalesTitle>
-            <SalesNumber>100</SalesNumber>
+            <SalesNumber>{loading ? "Carregando..." : totalGas}</SalesNumber> {/* Exibe o total de gás */}
             <ChartContainer className="chart">
               {gasSalesData.map((data, index) => (
                 <div key={index}>
@@ -225,9 +256,7 @@ export const Dashboard = () => {
                 />
               </ModalField>
               <ModalField>
-                <ModalLabel htmlFor="paymentMethod">
-                  Forma de Pagamento
-                </ModalLabel>
+                <ModalLabel htmlFor="paymentMethod">Forma de Pagamento</ModalLabel>
                 <ModalSelect
                   id="paymentMethod"
                   value={paymentMethod}
@@ -251,9 +280,7 @@ export const Dashboard = () => {
                 />
               </ModalField>
               <ModalButton type="submit">Adicionar</ModalButton>
-              <CloseButton type="button" onClick={handleCloseModal}>
-                Cancelar
-              </CloseButton>
+              <CloseButton type="button" onClick={handleCloseModal}>Cancelar</CloseButton>
             </ModalForm>
           </ModalContent>
         </ModalOverlay>

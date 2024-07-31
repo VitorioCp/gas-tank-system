@@ -20,7 +20,7 @@ export function Login({ onLogin }) {
       if (response.status === 200) {
         localStorage.setItem("token", response.data.token);
         onLogin(response.data.token);
-        navigate("/cashstart");
+        navigate("/dashboard");
       }
     } catch (error) {
       console.error(
