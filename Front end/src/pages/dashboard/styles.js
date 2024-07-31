@@ -1,5 +1,3 @@
-// styles.js
-
 import styled from "styled-components";
 
 export const Container = styled.div`
@@ -7,7 +5,7 @@ export const Container = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  background-color: #f0f2f5;
+  background-color: #ffffff; /* Fundo branco */
   min-height: 100vh;
   justify-content: space-between;
 `;
@@ -15,7 +13,7 @@ export const Container = styled.div`
 export const Header = styled.header`
   width: 100%;
   padding: 20px;
-  background-color: #007bff;
+  background-color: #333333; /* Tom escuro */
   color: white;
   text-align: center;
   font-size: 24px;
@@ -37,7 +35,7 @@ export const LogoutButton = styled.button`
   transition: color 0.2s;
 
   &:hover {
-    color: #ff0000;
+    color: #ff0000; /* Vermelho ao passar o mouse */
   }
 `;
 
@@ -45,7 +43,7 @@ export const Board = styled.main`
   width: 85%;
   border: 1px solid #ddd;
   border-radius: 8px;
-  background-color: #fff;
+  background-color: #f0f0f0; /* Fundo claro */
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   flex-grow: 1;
@@ -56,6 +54,9 @@ export const Balance = styled.span`
   font-size: 20px;
   font-weight: bold;
   margin-bottom: 20px;
+  background-color: #dcdcdc; /* Cor de fundo para destaque */
+  padding: 10px;
+  border-radius: 5px;
 `;
 
 export const SalesSection = styled.div`
@@ -73,7 +74,7 @@ export const SalesInfo = styled.div`
   padding: 20px;
   border: 1px solid #ddd;
   border-radius: 8px;
-  background-color: #f9f9f9;
+  background-color: #ffffff; /* Fundo branco */
   position: relative;
 
   &:hover .chart {
@@ -90,7 +91,7 @@ export const SalesTitle = styled.h2`
 export const SalesNumber = styled.p`
   font-size: 24px;
   font-weight: bold;
-  color: #007bff;
+  color: #333333; /* Tom escuro */
 `;
 
 export const ChartContainer = styled.div`
@@ -109,7 +110,7 @@ export const ChartContainer = styled.div`
 export const ChartLabel = styled.span`
   font-size: 14px;
   margin-right: 10px;
-  color: #333;
+  color: #333333; /* Tom escuro */
 `;
 
 export const ChartNumber = styled.span`
@@ -125,21 +126,21 @@ export const Button = styled.button`
   font-size: 16px;
   font-weight: bold;
   color: white;
-  background-color: #007bff;
+  background-color: #555555; /* Tom escuro */
   border: none;
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: #0056b3;
+    background-color: #444444; /* Tom escuro ao passar o mouse */
   }
 `;
 
 export const Footer = styled.footer`
   width: 100%;
   padding: 20px;
-  background-color: #007bff;
+  background-color: #333333; /* Tom escuro */
   color: white;
   text-align: center;
   font-size: 14px;
@@ -186,7 +187,7 @@ export const ModalLabel = styled.label`
   margin-bottom: 5px;
   font-size: 14px;
   font-weight: bold;
-  color: #333;
+  color: #333333; /* Tom escuro */
 `;
 
 export const ModalInput = styled.input`
@@ -216,14 +217,14 @@ export const ModalButton = styled.button`
   font-size: 16px;
   font-weight: bold;
   color: white;
-  background-color: #007bff;
+  background-color: #555555; /* Tom escuro */
   border: none;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: #0056b3;
+    background-color: #444444; /* Tom escuro ao passar o mouse */
   }
 `;
 
@@ -232,7 +233,7 @@ export const CloseButton = styled.button`
   font-size: 16px;
   font-weight: bold;
   color: white;
-  background-color: #ff0000;
+  background-color: #ff0000; /* Vermelho */
   border: none;
   border-radius: 4px;
   cursor: pointer;
@@ -240,21 +241,21 @@ export const CloseButton = styled.button`
   margin-top: 10px;
 
   &:hover {
-    background-color: #cc0000;
+    background-color: #cc0000; /* Vermelho ao passar o mouse */
   }
 `;
 
 export const NotesSection = styled.div`
   margin-top: 20px;
   padding: 10px;
-  background-color: #f8f9fa;
+  background-color: #f8f9fa; /* Fundo claro */
   border-radius: 5px;
 `;
 
 export const Note = styled.div`
   padding: 5px;
   margin: 5px 0;
-  background-color: #e2e3e5;
+  background-color: #e2e3e5; /* Fundo claro para notas */
   border-radius: 3px;
   display: flex;
   justify-content: space-between;
@@ -262,29 +263,92 @@ export const Note = styled.div`
 `;
 
 export const EditButton = styled.button`
-  background-color: #ffc107;
+  background-color: #ffc107; /* Amarelo */
   border: none;
   color: white;
   padding: 5px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background-color: #e0a800;
-  }
 `;
 
 export const DeleteButton = styled.button`
-  background-color: #dc3545;
+  background-color: #dc3545; /* Vermelho */
   border: none;
   color: white;
   padding: 5px;
-  border-radius: 4px;
+  margin-left: 5px;
+`;
+
+export const SettingsButton = styled.button`
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: none;
+  border: none;
+  color: #555555; /* Cor da engrenagem */
+  font-size: 24px;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: color 0.2s;
 
   &:hover {
-    background-color: #c82333;
+    color: #000000; /* Cor ao passar o mouse */
   }
 `;
+
+export const DateDisplay = styled.div`
+  margin: 20px 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: #333333; /* Tom escuro */
+`;
+
+export const PricingModalOverlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+export const PricingModalContent = styled.div`
+  background-color: #2b2b2b;
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px;
+  color: white;
+`;
+
+export const PricingModalHeader = styled.h2`
+  margin: 0;
+  margin-bottom: 20px;
+  text-align: center;
+`;
+
+export const PricingModalForm = styled.form`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const PricingModalField = styled.div`
+  margin-bottom: 15px;
+`;
+
+export const PricingModalLabel = styled.label`
+  margin-bottom: 5px;
+  display: block;
+`;
+
+export const PricingModalInput = styled.input`
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #333;
+`;
+
+export const Flex = styled.div`
+display: flex;
+
+`

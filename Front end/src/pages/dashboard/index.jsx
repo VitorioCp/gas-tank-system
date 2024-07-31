@@ -32,6 +32,8 @@ import {
   DeleteButton,
 } from "./styles";
 import { useNavigate } from "react-router-dom";
+import { Flex } from "../Main/styles";
+import  axios from "axios";
 
 export const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -40,14 +42,24 @@ export const Dashboard = () => {
   const [observation, setObservation] = useState("");
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState("");
-  const [editingNoteIndex, setEditingNoteIndex] = useState(null); // Índice da nota sendo editada
+  const [editingNoteIndex, setEditingNoteIndex] = useState(null);
   const navigate = useNavigate();
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
   };
 
-  const handleCloseModal = () => {
+  const handleCloseModal = async () => {
+    try {
+      const response = await axios.post("http://localhost:3333/sell", {
+        paymentMethod,
+        quantity,
+        observation,
+      });
+      console.log("enviado com sucesso", response);
+    } catch (error) {
+      console.error("Não foi possível enviar para o servidor", error);
+    }
     setIsModalOpen(false);
   };
 
@@ -70,13 +82,11 @@ export const Dashboard = () => {
   const handleAddNote = () => {
     if (newNote) {
       if (editingNoteIndex !== null) {
-        // Se estamos editando uma nota, atualiza a nota existente
         const updatedNotes = [...notes];
         updatedNotes[editingNoteIndex] = newNote;
         setNotes(updatedNotes);
         setEditingNoteIndex(null);
       } else {
-        // Caso contrário, adiciona uma nova nota
         setNotes([...notes, newNote]);
       }
       setNewNote("");
@@ -85,7 +95,7 @@ export const Dashboard = () => {
 
   const handleEditNote = (index) => {
     setNewNote(notes[index]);
-    setEditingNoteIndex(index); // Define o índice da nota a ser editada
+    setEditingNoteIndex(index);
   };
 
   const handleDeleteNote = (index) => {
@@ -94,29 +104,34 @@ export const Dashboard = () => {
   };
 
   const gasSalesData = [
-    { method: "Dinheiro", value: 30, color: "#007bff" },
-    { method: "Débito", value: 20, color: "#28a745" },
-    { method: "Crédito", value: 10, color: "#ffc107" },
-    { method: "Pix", value: 40, color: "#17a2b8" },
+    { method: "Dinheiro", value: 30, color: "#000" },
+    { method: "Débito", value: 20, color: "#000" },
+    { method: "Crédito", value: 10, color: "#000" },
+    { method: "Pix", value: 40, color: "#000" },
   ];
 
   const waterSalesData = [
-    { method: "Dinheiro", value: 15, color: "#007bff" },
-    { method: "Débito", value: 25, color: "#28a745" },
-    { method: "Crédito", value: 35, color: "#ffc107" },
-    { method: "Pix", value: 25, color: "#17a2b8" },
+    { method: "Dinheiro", value: 15, color: "#000" },
+    { method: "Débito", value: 25, color: "#000" },
+    { method: "Crédito", value: 35, color: "#000" },
+    { method: "Pix", value: 25, color: "#000" },
   ];
+
+  const currentDate = new Date().toLocaleDateString();
 
   return (
     <Container>
       <Header>
         Dashboard de Depósito de Gás
-        <LogoutButton onClick={handleLogout}>
-          <FaSignOutAlt />
-          Logout
-        </LogoutButton>
+        <Flex style={{ gap: "50px" }}>
+          <LogoutButton onClick={handleLogout} style={{ marginRight: "30px" }}>
+            <FaSignOutAlt />
+            Logout
+          </LogoutButton>
+        </Flex>
       </Header>
       <Board>
+        <h2 style={{ textAlign: "center" }}>{currentDate}</h2>
         <Balance>Saldo total: R$ 1.500</Balance>
         <SalesSection>
           <SalesInfo>
@@ -164,7 +179,6 @@ export const Dashboard = () => {
         </SalesSection>
         <Button onClick={handleOpenModal}>Adicionar Venda</Button>
 
-        {/* Nova Seção de Observações Importantes */}
         <NotesSection>
           <h2>Observações Importantes</h2>
           <ModalField>
@@ -184,8 +198,12 @@ export const Dashboard = () => {
             notes.map((note, index) => (
               <Note key={index}>
                 {note}
-                <EditButton onClick={() => handleEditNote(index)}>Editar</EditButton>
-                <DeleteButton onClick={() => handleDeleteNote(index)}>Deletar</DeleteButton>
+                <EditButton onClick={() => handleEditNote(index)}>
+                  Editar
+                </EditButton>
+                <DeleteButton onClick={() => handleDeleteNote(index)}>
+                  Deletar
+                </DeleteButton>
               </Note>
             ))
           )}
