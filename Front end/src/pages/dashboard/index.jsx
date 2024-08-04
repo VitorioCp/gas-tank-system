@@ -36,6 +36,7 @@ import { Flex } from "../Main/styles";
 import axios from "axios";
 import { TotaGas } from "../../components/TotaGas"; // Importar a função TotaGas
 import { TotaAgua } from "../../components/TotalAgua";
+import { EstoqueAgua, EstoqueGas } from "../../components/Estoque";
 
 // Configuração do Axios para incluir token
 const api = axios.create({
@@ -68,6 +69,8 @@ export const Dashboard = () => {
   const [loading, setLoading] = useState(true); // Estado para controle de loading
   const [venda, setVenda] = useState("gas");
   const navigate = useNavigate();
+  const { gasCheio, gasVazio } = EstoqueGas();
+  const { aguaCheio, AguaVazio } = EstoqueAgua();
 
   const fetchTotalGas = async () => {
     try {
@@ -220,19 +223,20 @@ export const Dashboard = () => {
         <SalesSection>
           <SalesInfo>
             <SalesTitle>Total de Gás Cheio</SalesTitle>
-            <SalesNumber>150</SalesNumber>
-          </SalesInfo>
-          <SalesInfo>
-            <SalesTitle>Total de Água Cheia</SalesTitle>
-            <SalesNumber>80</SalesNumber>
+            {gasCheio}
           </SalesInfo>
           <SalesInfo>
             <SalesTitle>Total de Gás Vazio</SalesTitle>
-            <SalesNumber>20</SalesNumber>
+            <SalesNumber>{gasVazio}</SalesNumber>
           </SalesInfo>
           <SalesInfo>
+            <SalesTitle>Total de Água Cheia</SalesTitle>
+            <SalesNumber>{aguaCheio}</SalesNumber>
+          </SalesInfo>
+          
+          <SalesInfo>
             <SalesTitle>Total de Água Vazia</SalesTitle>
-            <SalesNumber>10</SalesNumber>
+            <SalesNumber>{AguaVazio}</SalesNumber>
           </SalesInfo>
         </SalesSection>
         <Button onClick={handleOpenModal}>Adicionar Venda</Button>
