@@ -2,11 +2,12 @@ const Sell = require("../models/Sell");
 
 class SellRouter {
   async create(req, res) {
-    const { paymentMethod, quantity, observation } = req.body;
+    const { venda, paymentMethod, quantity, observation } = req.body;
 
     try {
       // Cria um novo registro na tabela Sell sem passar o 'id'
       const newSell = await Sell.create({
+        venda,
         paymentMethod,
         quantity,
         observation,

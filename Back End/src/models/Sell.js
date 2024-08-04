@@ -17,6 +17,10 @@ const Sell = sequelize.define("Sell", {
     allowNull: false,
     primaryKey: true,
   },
+  venda: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   paymentMethod: {
     type: DataTypes.STRING,
     allowNull: false,

@@ -35,21 +35,25 @@ import { useNavigate } from "react-router-dom";
 import { Flex } from "../Main/styles";
 import axios from "axios";
 import { TotaGas } from "../../components/TotaGas"; // Importar a função TotaGas
+import { TotaAgua } from "../../components/TotalAgua";
 
 // Configuração do Axios para incluir token
 const api = axios.create({
-  baseURL: 'http://localhost:3333',
+  baseURL: "http://localhost:3333",
 });
 
-api.interceptors.request.use(config => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
   }
-  return config;
-}, error => {
-  return Promise.reject(error);
-});
+);
 
 export const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -60,7 +64,9 @@ export const Dashboard = () => {
   const [newNote, setNewNote] = useState("");
   const [editingNoteIndex, setEditingNoteIndex] = useState(null);
   const [totalGas, setTotalGas] = useState(0); // Estado para armazenar o total de gás
+  const [totalAgua, setTotalAgua] = useState(0);
   const [loading, setLoading] = useState(true); // Estado para controle de loading
+  const [venda, setVenda] = useState("gas");
   const navigate = useNavigate();
 
   const fetchTotalGas = async () => {
@@ -74,9 +80,24 @@ export const Dashboard = () => {
     }
   };
 
+  const fechtTotalAgua = async () => {
+    try {
+      const result = await TotaAgua();
+      setTotalAgua(result);
+    } catch (error) {
+      console.error("Erro ao recueprar o total de aguas:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchTotalGas(); // Chama a função para buscar o total de gás
   }, []); // Executa apenas uma vez após a montagem do componente
+
+  useEffect(() => {
+    fechtTotalAgua(); // Chama a função para buscar o total de gás
+  }, []);
 
   const handleOpenModal = () => {
     setIsModalOpen(true);
@@ -90,6 +111,7 @@ export const Dashboard = () => {
     event.preventDefault();
     try {
       const response = await api.post("/sell", {
+        venda,
         paymentMethod,
         quantity,
         observation,
@@ -97,7 +119,7 @@ export const Dashboard = () => {
       console.log("Enviado com sucesso", response);
 
       // Recarregar o total de gás após uma nova venda
-      await fetchTotalGas();
+      await fetchTotalGas(), fechtTotalAgua();
     } catch (error) {
       console.error("Não foi possível enviar para o servidor", error);
     }
@@ -167,7 +189,10 @@ export const Dashboard = () => {
         <SalesSection>
           <SalesInfo>
             <SalesTitle>Total de Gás Vendido</SalesTitle>
-            <SalesNumber>{loading ? "Carregando..." : totalGas}</SalesNumber> {/* Exibe o total de gás */}
+            <SalesNumber>
+              {loading ? "Carregando..." : totalGas}
+            </SalesNumber>{" "}
+            {/* Exibe o total de gás */}
             <ChartContainer className="chart">
               {gasSalesData.map((data, index) => (
                 <div key={index}>
@@ -179,7 +204,9 @@ export const Dashboard = () => {
           </SalesInfo>
           <SalesInfo>
             <SalesTitle>Total de Galões de Água Vendidos</SalesTitle>
-            <SalesNumber>50</SalesNumber>
+            <SalesNumber>
+              {loading ? "Carregando..." : totalAgua}
+            </SalesNumber>{" "}
             <ChartContainer className="chart">
               {waterSalesData.map((data, index) => (
                 <div key={index}>
@@ -246,6 +273,20 @@ export const Dashboard = () => {
             <ModalHeader>Adicionar Venda</ModalHeader>
             <ModalForm onSubmit={handleSubmit}>
               <ModalField>
+                <ModalLabel htmlFor="">Venda:</ModalLabel>
+
+                <ModalSelect
+                  id="venda"
+                  onChange={(e) => {
+                    setVenda(e.target.value);
+                    console.log(e.target.value);
+                  }}
+                >
+                  <option value="gas">Gás</option>
+                  <option value="agua">Galão</option>
+                </ModalSelect>
+              </ModalField>
+              <ModalField>
                 <ModalLabel htmlFor="quantity">Quantidade</ModalLabel>
                 <ModalInput
                   type="number"
@@ -256,7 +297,9 @@ export const Dashboard = () => {
                 />
               </ModalField>
               <ModalField>
-                <ModalLabel htmlFor="paymentMethod">Forma de Pagamento</ModalLabel>
+                <ModalLabel htmlFor="paymentMethod">
+                  Forma de Pagamento
+                </ModalLabel>
                 <ModalSelect
                   id="paymentMethod"
                   value={paymentMethod}
@@ -280,7 +323,9 @@ export const Dashboard = () => {
                 />
               </ModalField>
               <ModalButton type="submit">Adicionar</ModalButton>
-              <CloseButton type="button" onClick={handleCloseModal}>Cancelar</CloseButton>
+              <CloseButton type="button" onClick={handleCloseModal}>
+                Cancelar
+              </CloseButton>
             </ModalForm>
           </ModalContent>
         </ModalOverlay>
