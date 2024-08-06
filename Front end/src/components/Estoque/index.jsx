@@ -21,7 +21,7 @@ const totalEstoqueGalao = 75;
 // Funções Gás
 export const EstoqueGasCheio = async () => {
   const sales = await dados();
-  const gasVendido = sales.filter((sale) => sale.venda === "gas").length;
+  const gasVendido = sales.filter((sale) => sale.venda === "gas").reduce((total, sale) => total + sale.quantity, 0);
   const gasCheio = totalEstoqueGas - gasVendido; // Exemplo: Quantidade de gás cheio
   console.log(gasCheio);
   return gasCheio;
@@ -37,7 +37,7 @@ export const EstoqueGasVazio = async () => {
 // Funções Galão
 export const EstoqueAguaCheio = async () => {
   const sales = await dados();
-  const aguaVendido = sales.filter((sale) => sale.venda === "agua").length;
+  const aguaVendido = sales.filter((sale) => sale.venda === "agua").reduce((total, sale) => total + sale.quantity, 0)
   const aguaCheio = totalEstoqueGalao - aguaVendido; // Exemplo: Quantidade de gás cheio
   console.log(aguaCheio);
   return aguaCheio;

@@ -30,6 +30,7 @@ import {
   Note,
   EditButton,
   DeleteButton,
+  SectionButton,
 } from "./styles";
 import { useNavigate } from "react-router-dom";
 import { Flex } from "../Main/styles";
@@ -50,7 +51,7 @@ import {
   GalaoDebito,
   GalaoDinheiro,
   GalaoPix,
-  GasCredito
+  GasCredito,
 } from "../../components/Vendas";
 
 // Configuração do Axios para incluir token
@@ -87,25 +88,58 @@ export const Dashboard = () => {
   const [estoqueAguaVazio, setEstoqueAguaVazio] = useState(0);
   const [estoqueGasCheio, setEstoqueGasCheio] = useState(0);
   const [estoqueGasVazio, setEstoqueGasVazio] = useState(0);
+  const [gasSalesData, setGasSalesData] = useState([]);
+  const [waterSalesData, setWaterSalesData] = useState([]);
   const navigate = useNavigate();
 
   const fetchTotalGas = async () => {
     try {
-      const result = await TotaGas(); // Chama a função TotaGas
-      setTotalGas(result); // Armazena o resultado no estado
+      const [totalGasValue, gasDinheiro, gasDebito, gasCredito, gasPix] =
+        await Promise.all([
+          TotaGas(),
+          GasDinheiro(),
+          GasDebito(),
+          GasCredito(),
+          GasPix(),
+        ]);
+      setTotalGas(totalGasValue);
+      setGasSalesData([
+        { method: "Dinheiro", value: gasDinheiro, color: "#000" },
+        { method: "Débito", value: gasDebito, color: "#000" },
+        { method: "Crédito", value: gasCredito, color: "#000" },
+        { method: "Pix", value: gasPix, color: "#000" },
+      ]);
     } catch (error) {
       console.error("Erro ao recuperar o total de gás:", error);
     } finally {
-      setLoading(false); // Define loading como false após a chamada
+      setLoading(false);
     }
   };
 
   const fechtTotalAgua = async () => {
     try {
-      const result = await TotaAgua();
-      setTotalAgua(result);
+      const [
+        totalAguaValue,
+        galaoDinheiro,
+        galaoDebito,
+        galaoCredito,
+        galaoPix,
+      ] = await Promise.all([
+        TotaAgua(),
+        GalaoDinheiro(),
+        GalaoDebito(),
+        GalaoCredito(),
+        GalaoPix(),
+      ]);
+      setTotalAgua(totalAguaValue);
+      setWaterSalesData([
+        { method: "Dinheiro", value: galaoDinheiro, color: "#000" },
+        { method: "Débito", value: galaoDebito, color: "#000" },
+        { method: "Crédito", value: galaoCredito, color: "#000" },
+        { method: "Pix", value: galaoPix, color: "#000" },
+      ]);
     } catch (error) {
-      console.error("Erro ao recueprar o total de aguas:", error);
+      console.error("Erro ao recueprar o total de águas:", error);
     } finally {
       setLoading(false);
     }
@@ -192,20 +226,6 @@ export const Dashboard = () => {
     setNotes(updatedNotes);
   };
 
-  const gasSalesData = [
-    { method: "Dinheiro", value: 30, color: "#000" },
-    { method: "Débito", value: 20, color: "#000" },
-    { method: "Crédito", value: 10, color: "#000" },
-    { method: "Pix", value: 40, color: "#000" },
-  ];
-
-  const waterSalesData = [
-    { method: "Dinheiro", value: 15, color: "#000" },
-    { method: "Débito", value: 25, color: "#000" },
-    { method: "Crédito", value: 35, color: "#000" },
-    { method: "Pix", value: 25, color: "#000" },
-  ];
-
   const currentDate = new Date().toLocaleDateString();
 
   return (
@@ -224,7 +244,7 @@ export const Dashboard = () => {
         <Balance>Saldo total: R$ 1.500</Balance>
         <SalesSection>
           <SalesInfo>
-            <SalesTitle>Valor Arrecadado Gás</SalesTitle>
+            <SalesTitle>Valor físico Arrecadado Gás</SalesTitle>
             <SalesNumber>
               {loading ? "Carregando..." : ` R$ ${totalGas}`}
             </SalesNumber>{" "}
@@ -239,7 +259,7 @@ export const Dashboard = () => {
             </ChartContainer>
           </SalesInfo>
           <SalesInfo>
-            <SalesTitle>Valor Arrecadado Galão</SalesTitle>
+            <SalesTitle>Valor físico Arrecadado Galão</SalesTitle>
             <SalesNumber>
               {loading ? "Carregando..." : ` R$ ${totalAgua}`}
             </SalesNumber>{" "}
@@ -272,7 +292,11 @@ export const Dashboard = () => {
           </SalesInfo>
         </SalesSection>
 
-        <Button onClick={handleOpenModal}>Adicionar Venda</Button>
+        <SectionButton>
+          <Button onClick={handleOpenModal}>Adicionar Venda</Button>
+          <Button onClick={handleOpenModal}>Adicionar Estoque</Button>
+          <Button onClick={handleOpenModal}>Adicionar Saldo </Button>
+        </SectionButton>
 
         <NotesSection>
           <h2>Observações Importantes</h2>
