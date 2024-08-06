@@ -18,36 +18,34 @@ const dados = async () => {
 const totalEstoqueGas = 181;
 const totalEstoqueGalao = 75;
 
-
-//Funções Gás
+// Funções Gás
 export const EstoqueGasCheio = async () => {
-  //
   const sales = await dados();
   const gasVendido = sales.filter((sale) => sale.venda === "gas").length;
   const gasCheio = totalEstoqueGas - gasVendido; // Exemplo: Quantidade de gás cheio
   console.log(gasCheio);
-  return gasCheio
-
- 
+  return gasCheio;
 };
 
-export const EstoqueGasVazio = () => {
-  const estoque = totalEstoque - estoqueGasCheio;
-  console.log
-  return estoque
+export const EstoqueGasVazio = async () => {
+  const gasCheio = await EstoqueGasCheio();
+  const gasVazio = totalEstoqueGas - gasCheio;
+  console.log(gasVazio);
+  return gasVazio;
 };
 
-//Funções Galão
-
+// Funções Galão
 export const EstoqueAguaCheio = async () => {
   const sales = await dados();
   const aguaVendido = sales.filter((sale) => sale.venda === "agua").length;
   const aguaCheio = totalEstoqueGalao - aguaVendido; // Exemplo: Quantidade de gás cheio
-
   console.log(aguaCheio);
-  return aguaCheio
+  return aguaCheio;
 };
 
-export const EstoqueAguaVazio = () => {
-  const estoque = totalEstoqueGalao - estoqueAguaCheio
-}
+export const EstoqueAguaVazio = async () => {
+  const aguaCheio = await EstoqueAguaCheio();
+  const aguaVazio = totalEstoqueGalao - aguaCheio;
+  console.log(aguaVazio);
+  return aguaVazio;
+};

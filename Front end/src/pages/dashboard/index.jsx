@@ -36,7 +36,22 @@ import { Flex } from "../Main/styles";
 import axios from "axios";
 import { TotaGas } from "../../components/TotaGas"; // Importar a função TotaGas
 import { TotaAgua } from "../../components/TotalAgua";
-import { EstoqueAguaCheio, EstoqueAguaVazio, EstoqueGasCheio, EstoqueGasVazio } from "../../components/Estoque/index";
+import {
+  EstoqueAguaCheio,
+  EstoqueAguaVazio,
+  EstoqueGasCheio,
+  EstoqueGasVazio,
+} from "../../components/Estoque/index";
+import {
+  GasDinheiro,
+  GasDebito,
+  GasPix,
+  GalaoCredito,
+  GalaoDebito,
+  GalaoDinheiro,
+  GalaoPix,
+  GasCredito
+} from "../../components/Vendas";
 
 // Configuração do Axios para incluir token
 const api = axios.create({
@@ -68,6 +83,10 @@ export const Dashboard = () => {
   const [totalAgua, setTotalAgua] = useState(0);
   const [loading, setLoading] = useState(true); // Estado para controle de loading
   const [venda, setVenda] = useState("gas");
+  const [estoqueAguaCheio, setEstoqueAguaCheio] = useState(0);
+  const [estoqueAguaVazio, setEstoqueAguaVazio] = useState(0);
+  const [estoqueGasCheio, setEstoqueGasCheio] = useState(0);
+  const [estoqueGasVazio, setEstoqueGasVazio] = useState(0);
   const navigate = useNavigate();
 
   const fetchTotalGas = async () => {
@@ -92,12 +111,27 @@ export const Dashboard = () => {
     }
   };
 
-  useEffect(() => {
-    fetchTotalGas(); // Chama a função para buscar o total de gás
-  }, []); // Executa apenas uma vez após a montagem do componente
+  const fetchEstoque = async () => {
+    try {
+      const [aguaCheio, aguaVazio, gasCheio, gasVazio] = await Promise.all([
+        EstoqueAguaCheio(),
+        EstoqueAguaVazio(),
+        EstoqueGasCheio(),
+        EstoqueGasVazio(),
+      ]);
+      setEstoqueAguaCheio(aguaCheio);
+      setEstoqueAguaVazio(aguaVazio);
+      setEstoqueGasCheio(gasCheio);
+      setEstoqueGasVazio(gasVazio);
+    } catch (error) {
+      console.error("Erro ao recuperar o estoque:", error);
+    }
+  };
 
   useEffect(() => {
-    fechtTotalAgua(); // Chama a função para buscar o total de gás
+    fetchTotalGas();
+    fechtTotalAgua();
+    fetchEstoque();
   }, []);
 
   const handleOpenModal = () => {
@@ -110,6 +144,7 @@ export const Dashboard = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
+
     try {
       const response = await api.post("/sell", {
         venda,
@@ -119,8 +154,8 @@ export const Dashboard = () => {
       });
       console.log("Enviado com sucesso", response);
 
-      // Recarregar o total de gás após uma nova venda
-      await fetchTotalGas(), fechtTotalAgua();
+      // Recarregar o total de gás, água e estoque após uma nova venda
+      await Promise.all([fetchTotalGas(), fechtTotalAgua(), fetchEstoque()]);
     } catch (error) {
       console.error("Não foi possível enviar para o servidor", error);
     }
@@ -189,9 +224,9 @@ export const Dashboard = () => {
         <Balance>Saldo total: R$ 1.500</Balance>
         <SalesSection>
           <SalesInfo>
-            <SalesTitle>Total de Gás Vendido</SalesTitle>
+            <SalesTitle>Valor Arrecadado Gás</SalesTitle>
             <SalesNumber>
-              {loading ? "Carregando..." : totalGas}
+              {loading ? "Carregando..." : ` R$ ${totalGas}`}
             </SalesNumber>{" "}
             {/* Exibe o total de gás */}
             <ChartContainer className="chart">
@@ -204,9 +239,9 @@ export const Dashboard = () => {
             </ChartContainer>
           </SalesInfo>
           <SalesInfo>
-            <SalesTitle>Total de Galões de Água Vendidos</SalesTitle>
+            <SalesTitle>Valor Arrecadado Galão</SalesTitle>
             <SalesNumber>
-              {loading ? "Carregando..." : totalAgua}
+              {loading ? "Carregando..." : ` R$ ${totalAgua}`}
             </SalesNumber>{" "}
             <ChartContainer className="chart">
               {waterSalesData.map((data, index) => (
@@ -221,22 +256,22 @@ export const Dashboard = () => {
         <SalesSection>
           <SalesInfo>
             <SalesTitle>Total de Gás Cheio</SalesTitle>
-            <SalesNumber><EstoqueGasCheio/></SalesNumber>
+            <SalesNumber>{estoqueGasCheio}</SalesNumber>
           </SalesInfo>
           <SalesInfo>
             <SalesTitle>Total de Gás Vazio</SalesTitle>
-            <SalesNumber><EstoqueGasVazio/></SalesNumber>
+            <SalesNumber>{estoqueGasVazio}</SalesNumber>
           </SalesInfo>
           <SalesInfo>
             <SalesTitle>Total de Água Cheia</SalesTitle>
-            <SalesNumber><EstoqueAguaCheio/></SalesNumber>
+            <SalesNumber>{estoqueAguaCheio}</SalesNumber>
           </SalesInfo>
-          
           <SalesInfo>
             <SalesTitle>Total de Água Vazia</SalesTitle>
-            <SalesNumber><EstoqueAguaVazio/></SalesNumber>
+            <SalesNumber>{estoqueAguaVazio}</SalesNumber>
           </SalesInfo>
         </SalesSection>
+
         <Button onClick={handleOpenModal}>Adicionar Venda</Button>
 
         <NotesSection>
