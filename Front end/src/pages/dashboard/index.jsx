@@ -35,8 +35,8 @@ import {
 import { useNavigate } from "react-router-dom";
 import { Flex } from "../Main/styles";
 import axios from "axios";
-import { TotaGas } from "../../components/TotaGas"; // Importar a função TotaGas
-import { TotaAgua } from "../../components/TotalAgua";
+import { TotalGas } from "../../components/TotalGas"; // Importar a função TotaGas
+import { TotalAgua } from "../../components/TotalAgua";
 import {
   EstoqueAguaCheio,
   EstoqueAguaVazio,
@@ -53,6 +53,7 @@ import {
   GalaoPix,
   GasCredito,
 } from "../../components/Vendas";
+import { SaldoTotal } from "../../components/SaldoTotal";
 
 // Configuração do Axios para incluir token
 const api = axios.create({
@@ -74,6 +75,8 @@ api.interceptors.request.use(
 
 export const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEstoqueModalOpen, setIsEstoqueModalOpen] = useState(false);
+  const [isSaldoModalOpen, setIsSaldoModalOpen] = useState(false);
   const [quantity, setQuantity] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
   const [observation, setObservation] = useState("");
@@ -90,13 +93,17 @@ export const Dashboard = () => {
   const [estoqueGasVazio, setEstoqueGasVazio] = useState(0);
   const [gasSalesData, setGasSalesData] = useState([]);
   const [waterSalesData, setWaterSalesData] = useState([]);
+  const [saldoTotal, setSaldoTotal] = useState(0);
+  const [vendaStock, setVendaStock] = useState("");
+  const [quantityStock, setQuantityStock] = useState(0);
+
   const navigate = useNavigate();
 
   const fetchTotalGas = async () => {
     try {
       const [totalGasValue, gasDinheiro, gasDebito, gasCredito, gasPix] =
         await Promise.all([
-          TotaGas(),
+          TotalGas(),
           GasDinheiro(),
           GasDebito(),
           GasCredito(),
@@ -125,7 +132,7 @@ export const Dashboard = () => {
         galaoCredito,
         galaoPix,
       ] = await Promise.all([
-        TotaAgua(),
+        TotalAgua(),
         GalaoDinheiro(),
         GalaoDebito(),
         GalaoCredito(),
@@ -163,6 +170,10 @@ export const Dashboard = () => {
   };
 
   useEffect(() => {
+    setSaldoTotal(totalGas + totalAgua);
+  }, [totalGas, totalAgua]);
+
+  useEffect(() => {
     fetchTotalGas();
     fechtTotalAgua();
     fetchEstoque();
@@ -174,6 +185,21 @@ export const Dashboard = () => {
 
   const handleCloseModal = () => {
     setIsModalOpen(false);
+  };
+  const handleOpenEstoqueModal = () => {
+    setIsEstoqueModalOpen(true);
+  };
+
+  const handleCloseEstoqueModal = () => {
+    setIsEstoqueModalOpen(false);
+  };
+
+  const handleOpenSaldoModal = () => {
+    setIsSaldoModalOpen(true);
+  };
+
+  const handleCloseSaldoModal = () => {
+    setIsSaldoModalOpen(false);
   };
 
   const handleSubmit = async (event) => {
@@ -194,6 +220,36 @@ export const Dashboard = () => {
       console.error("Não foi possível enviar para o servidor", error);
     }
     setIsModalOpen(false);
+  };
+
+  const handleModalStockSubmit = async (event) => {
+    event.preventDefault();
+
+    try {
+      const response = await api.post("/stock", {
+        produto : vendaStock,
+        quantity: quantityStock,
+      });
+      console.log("enviado com sucesso", response);
+    } catch (error) {
+      console.log("Não foi possível enviar o estoque para o servidor", error);
+    }
+
+    setIsEstoqueModalOpen(false);
+  };
+
+  const handleSubmitEstoque = async (event) => {
+    event.preventDefault();
+    // Lógica para adicionar estoque
+    // ...
+    setIsEstoqueModalOpen(false);
+  };
+
+  const handleSubmitSaldo = async (event) => {
+    event.preventDefault();
+    // Lógica para adicionar saldo
+    // ...
+    setIsSaldoModalOpen(false);
   };
 
   const handleLogout = () => {
@@ -241,7 +297,9 @@ export const Dashboard = () => {
       </Header>
       <Board>
         <h2 style={{ textAlign: "center" }}>{currentDate}</h2>
-        <Balance>Saldo total: R$ 1.500</Balance>
+        <Balance>
+          <SaldoTotal saldoTotal={saldoTotal} />{" "}
+        </Balance>
         <SalesSection>
           <SalesInfo>
             <SalesTitle>Valor físico Arrecadado Gás</SalesTitle>
@@ -294,8 +352,8 @@ export const Dashboard = () => {
 
         <SectionButton>
           <Button onClick={handleOpenModal}>Adicionar Venda</Button>
-          <Button onClick={handleOpenModal}>Adicionar Estoque</Button>
-          <Button onClick={handleOpenModal}>Adicionar Saldo </Button>
+          <Button onClick={handleOpenEstoqueModal}>Adicionar Estoque</Button>
+          <Button onClick={handleOpenSaldoModal}>Adicionar Saldo</Button>
         </SectionButton>
 
         <NotesSection>
@@ -328,6 +386,8 @@ export const Dashboard = () => {
           )}
         </NotesSection>
       </Board>
+
+      {/* Modal para adicionar venda */}
       {isModalOpen && (
         <ModalOverlay>
           <ModalContent>
@@ -391,7 +451,68 @@ export const Dashboard = () => {
           </ModalContent>
         </ModalOverlay>
       )}
-      <Footer>&copy; 2024 Depósito de Gás</Footer>
+      {/* Modal para adicionar Estoque */}
+
+      {isEstoqueModalOpen && (
+        <ModalOverlay>
+          <ModalContent>
+            <ModalHeader>Adicionar Estoque</ModalHeader>
+            <ModalForm onSubmit={handleSubmitEstoque}>
+              {/* Campos específicos para adicionar estoque */}
+
+              <ModalField>
+                <ModalSelect
+                  id="vendaestoque"
+                  onChange={(e) => {
+                    setVendaStock(e.target.value);
+                  }}
+                >
+                  <option value="">Selecione</option>
+                  <option value="gas">Gás</option>
+                  <option value="agua">Galão</option>
+                </ModalSelect>
+              </ModalField>
+              <ModalField>
+                <ModalLabel htmlFor="estoqueQuantity">Quantidade</ModalLabel>
+                <ModalInput
+                  type="number"
+                  id="estoqueQuantity"
+                  value={quantityStock} // Adicione um estado específico para quantidade de estoque se necessário
+                  onChange={(e) => setQuantityStock(e.target.value)}
+                  required
+                />
+              </ModalField>
+              <ModalButton type="submit" onClick={handleModalStockSubmit}>
+                Adicionar
+              </ModalButton>
+              <CloseButton type="button" onClick={handleCloseEstoqueModal}>
+                Cancelar
+              </CloseButton>
+            </ModalForm>
+          </ModalContent>
+        </ModalOverlay>
+      )}
+
+      {/* Modal para adicionar Saldo */}
+
+      {isSaldoModalOpen && (
+        <ModalOverlay>
+          <ModalContent>
+            <ModalHeader>Adicionar Saldo</ModalHeader>
+            <ModalForm>
+              <ModalField>
+                <ModalLabel htmlFor="adicaoSaldo">Valor: R$</ModalLabel>
+                <ModalInput type="number" id="adicaoSaldo" />
+              </ModalField>
+            </ModalForm>
+            <CloseButton type="button" onClick={handleCloseSaldoModal}>
+              Cancelar
+            </CloseButton>
+          </ModalContent>
+        </ModalOverlay>
+      )}
+
+      <Footer>&copy; 2024 Vitório Corrêa</Footer>
     </Container>
   );
 };

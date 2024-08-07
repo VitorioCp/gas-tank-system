@@ -1,6 +1,6 @@
 import axios from "axios";
 
-export const TotaAgua = async () => {
+export const TotalAgua = async () => {
   const dados = async () => {
     try {
       const token = localStorage.getItem("token"); // Obtém o token do localStorage

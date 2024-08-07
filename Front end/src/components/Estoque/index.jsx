@@ -15,6 +15,26 @@ const dados = async () => {
   }
 };
 
+const dadosStock = async () => {
+  try{
+    const token = localStorage.getItem("token")
+    const response = await axios.get("http://localhost:3333/stock",{
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    return response.data
+  } catch(error) {
+    console.error("Erro ao tentar recuperar dados do servidor", error);
+    return[]
+  }
+}
+
+const DadosStock =  async() => {
+  const dados = await dados2();
+}
+
+
 const totalEstoqueGas = 181;
 const totalEstoqueGalao = 75;
 

@@ -5,6 +5,7 @@ const { LoginRouter, verificarToken } = require("./controllers/login.router");
 const jwt = require("jsonwebtoken");
 const FormController = require("./controllers/form.router");
 const SellController = require("./controllers/sell.router.js");
+const StockController = require("./controllers/stock.router.js");
 
 //userController
 const userController = new UserController();
@@ -23,6 +24,8 @@ router.post("/form", verificarToken, (req, res) =>
   formController.create(req, res)
 );
 
+
+//Sell -> Destinado a entrada de novas vendas
 const sellController = new SellController();
 
 router.post("/sell", verificarToken, (req, res) =>
@@ -32,6 +35,13 @@ router.post("/sell", verificarToken, (req, res) =>
 router.get("/sell", verificarToken, (req, res) =>
   sellController.getAll(req, res)
 );
+
+//Estoque -> Destinado a todas informações de quantidade de produtos no estoque
+
+const stockController = new StockController();
+
+router.post("/stock", verificarToken, (req, res) => stockController.create(req, res))
+
 
 //verify-token
 
