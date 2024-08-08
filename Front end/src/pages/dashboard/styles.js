@@ -349,11 +349,14 @@ export const PricingModalInput = styled.input`
 `;
 
 export const Flex = styled.div`
-display: flex;
-
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 20px;
 `
 
 export const SectionButton = styled.div`
 display: flex;
 justify-content: space-around;
 `
+

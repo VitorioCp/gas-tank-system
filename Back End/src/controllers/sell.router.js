@@ -1,6 +1,6 @@
 const Sell = require("../models/Sell");
 
-class SellRouter {
+class SellController {
   async create(req, res) {
     const { venda, paymentMethod, quantity, observation } = req.body;
 
@@ -30,4 +30,4 @@ class SellRouter {
   }
 }
 
-module.exports = SellRouter;
+module.exports = SellController;

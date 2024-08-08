@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react"; // Importar useEffect
 import { FaSignOutAlt } from "react-icons/fa";
 import {
+  Flex,
   Container,
   Header,
   LogoutButton,
@@ -33,7 +34,6 @@ import {
   SectionButton,
 } from "./styles";
 import { useNavigate } from "react-router-dom";
-import { Flex } from "../Main/styles";
 import axios from "axios";
 import { TotalGas } from "../../components/TotalGas"; // Importar a função TotaGas
 import { TotalAgua } from "../../components/TotalAgua";
@@ -96,6 +96,8 @@ export const Dashboard = () => {
   const [saldoTotal, setSaldoTotal] = useState(0);
   const [vendaStock, setVendaStock] = useState("");
   const [quantityStock, setQuantityStock] = useState(0);
+  const [saldoValue, setSaldoValue] = useState(0);
+  const [observacaoSaldo, setObservacaoSaldo] = useState("");
 
   const navigate = useNavigate();
 
@@ -169,6 +171,8 @@ export const Dashboard = () => {
     }
   };
 
+  
+
   useEffect(() => {
     setSaldoTotal(totalGas + totalAgua);
   }, [totalGas, totalAgua]);
@@ -227,10 +231,11 @@ export const Dashboard = () => {
 
     try {
       const response = await api.post("/stock", {
-        produto : vendaStock,
+        produto: vendaStock,
         quantity: quantityStock,
       });
       console.log("enviado com sucesso", response);
+      await fetchEstoque;
     } catch (error) {
       console.log("Não foi possível enviar o estoque para o servidor", error);
     }
@@ -238,18 +243,30 @@ export const Dashboard = () => {
     setIsEstoqueModalOpen(false);
   };
 
+
+  const handleModalSaldo = async (event) => {
+    event.preventDefault();
+  
+    try {
+      const response = await api.post("/saldo", {
+        valores: saldoValue,
+        observacao: observacaoSaldo,
+      });
+      console.log("Enviado com sucesso", response);
+  
+      // Atualize o saldo total após adicionar
+      setSaldoTotal((prevSaldo) => prevSaldo + parseFloat(saldoValue)); // Atualiza o saldo total
+    } catch (error) {
+      console.error("Erro ao enviar os dados para o servidor", error);
+    }
+    setIsSaldoModalOpen(false);
+  };
+
   const handleSubmitEstoque = async (event) => {
     event.preventDefault();
     // Lógica para adicionar estoque
     // ...
     setIsEstoqueModalOpen(false);
-  };
-
-  const handleSubmitSaldo = async (event) => {
-    event.preventDefault();
-    // Lógica para adicionar saldo
-    // ...
-    setIsSaldoModalOpen(false);
   };
 
   const handleLogout = () => {
@@ -451,6 +468,7 @@ export const Dashboard = () => {
           </ModalContent>
         </ModalOverlay>
       )}
+
       {/* Modal para adicionar Estoque */}
 
       {isEstoqueModalOpen && (
@@ -501,13 +519,29 @@ export const Dashboard = () => {
             <ModalHeader>Adicionar Saldo</ModalHeader>
             <ModalForm>
               <ModalField>
-                <ModalLabel htmlFor="adicaoSaldo">Valor: R$</ModalLabel>
-                <ModalInput type="number" id="adicaoSaldo" />
+                <ModalLabel htmlFor="adicaoSaldo">Valor: R$ </ModalLabel>
+                <ModalInput
+                  type="number"
+                  id="adicaoSaldo"
+                  onChange={(e) => setSaldoValue(e.target.value)}
+                />
               </ModalField>
+              <ModalField>
+                <ModalLabel htmlFor="saldoObs">Observação: </ModalLabel>
+                <ModalInput
+                  type="text"
+                  id="saldoObs"
+                  onChange={(e) => setObservacaoSaldo(e.target.value)}
+                />
+              </ModalField>
+
+              <ModalButton type="submit" onClick={handleModalSaldo}>
+                Adicionar
+              </ModalButton>
+              <CloseButton type="button" onClick={handleCloseSaldoModal}>
+                Cancelar
+              </CloseButton>
             </ModalForm>
-            <CloseButton type="button" onClick={handleCloseSaldoModal}>
-              Cancelar
-            </CloseButton>
           </ModalContent>
         </ModalOverlay>
       )}

@@ -25,9 +25,10 @@ export const TotalGas = async () => {
       (total, sale) => total + sale.quantity * 80,
       0
     ); // Calcula o total
-    return totalValue; // Retorna o valor total
+
+    return totalValue 
   };
 
   const total = await valueTotal(); // Chama a função para calcular o total
-  return total; // Retorna apenas o valor total
+  return total; // Retorna o valor total
 };

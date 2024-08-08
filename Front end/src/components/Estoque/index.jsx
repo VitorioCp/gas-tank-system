@@ -1,5 +1,6 @@
 import axios from "axios";
 
+// Função para buscar dados de vendas
 const dados = async () => {
   try {
     const token = localStorage.getItem("token"); // Obtém o token do localStorage
@@ -15,34 +16,35 @@ const dados = async () => {
   }
 };
 
+// Função para buscar dados do estoque
 const dadosStock = async () => {
-  try{
-    const token = localStorage.getItem("token")
-    const response = await axios.get("http://localhost:3333/stock",{
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get("http://localhost:3333/stock", {
       headers: {
         Authorization: `Bearer ${token}`,
       },
-    })
-    return response.data
-  } catch(error) {
+    });
+    return response.data;
+  } catch (error) {
     console.error("Erro ao tentar recuperar dados do servidor", error);
-    return[]
+    return [];
   }
-}
+};
 
-const DadosStock =  async() => {
-  const dados = await dados2();
-}
-
-
+// Estoque total inicial
 const totalEstoqueGas = 181;
 const totalEstoqueGalao = 75;
 
 // Funções Gás
 export const EstoqueGasCheio = async () => {
   const sales = await dados();
+  const stock = await dadosStock();
+  
   const gasVendido = sales.filter((sale) => sale.venda === "gas").reduce((total, sale) => total + sale.quantity, 0);
-  const gasCheio = totalEstoqueGas - gasVendido; // Exemplo: Quantidade de gás cheio
+  const gasAdicionado = stock.filter((dado) => dado.produto === "gas").reduce((total, dado) => total + dado.quantity, 0);
+  
+  const gasCheio = totalEstoqueGas + gasAdicionado - gasVendido; // Quantidade de gás cheio considerando vendas e adições
   console.log(gasCheio);
   return gasCheio;
 };
@@ -57,8 +59,12 @@ export const EstoqueGasVazio = async () => {
 // Funções Galão
 export const EstoqueAguaCheio = async () => {
   const sales = await dados();
-  const aguaVendido = sales.filter((sale) => sale.venda === "agua").reduce((total, sale) => total + sale.quantity, 0)
-  const aguaCheio = totalEstoqueGalao - aguaVendido; // Exemplo: Quantidade de gás cheio
+  const stock = await dadosStock();
+  
+  const aguaVendido = sales.filter((sale) => sale.venda === "agua").reduce((total, sale) => total + sale.quantity, 0);
+  const aguaAdicionado = stock.filter((dado) => dado.produto === "agua").reduce((total, dado) => total + dado.quantity, 0);
+  
+  const aguaCheio = totalEstoqueGalao + aguaAdicionado - aguaVendido; // Quantidade de água cheia considerando vendas e adições
   console.log(aguaCheio);
   return aguaCheio;
 };
