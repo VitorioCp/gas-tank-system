@@ -1,10 +1,6 @@
 import React, { useState, useEffect } from "react"; // Importar useEffect
-import { FaSignOutAlt } from "react-icons/fa";
 import {
-  Flex,
   Container,
-  Header,
-  LogoutButton,
   Board,
   Balance,
   SalesSection,
@@ -12,7 +8,6 @@ import {
   SalesTitle,
   SalesNumber,
   Button,
-  Footer,
   ModalOverlay,
   ModalContent,
   ModalHeader,
@@ -27,10 +22,6 @@ import {
   ChartContainer,
   ChartLabel,
   ChartNumber,
-  NotesSection,
-  Note,
-  EditButton,
-  DeleteButton,
   SectionButton,
 } from "./styles";
 import { useNavigate } from "react-router-dom";
@@ -54,6 +45,9 @@ import {
   GasCredito,
 } from "../../components/Vendas";
 import { SaldoTotal } from "../../components/SaldoTotal";
+import { Header } from "../../components/Header";
+import { Footer } from "../../components/Footer";
+import { BoardNotas } from "../../components/BoardNotas";
 
 // Configuração do Axios para incluir token
 const api = axios.create({
@@ -80,9 +74,7 @@ export const Dashboard = () => {
   const [quantity, setQuantity] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
   const [observation, setObservation] = useState("");
-  const [notes, setNotes] = useState([]);
-  const [newNote, setNewNote] = useState("");
-  const [editingNoteIndex, setEditingNoteIndex] = useState(null);
+
   const [totalGas, setTotalGas] = useState(0); // Estado para armazenar o total de gás
   const [totalAgua, setTotalAgua] = useState(0);
   const [loading, setLoading] = useState(true); // Estado para controle de loading
@@ -98,6 +90,7 @@ export const Dashboard = () => {
   const [quantityStock, setQuantityStock] = useState(0);
   const [saldoValue, setSaldoValue] = useState(0);
   const [observacaoSaldo, setObservacaoSaldo] = useState("");
+  const [observacaoEstoque ,setObservacaoEstoque] = useState("")
 
   const navigate = useNavigate();
 
@@ -155,6 +148,16 @@ export const Dashboard = () => {
   };
 
   const fetchEstoque = async () => {
+    
+    try{
+      const response2 = await api.post("/notas",{
+        observacoes: `Alteração no estoque de ${vendaStock} quantidade ${quantityStock}, motivo -> ${observacaoEstoque}`
+      })
+    } catch(error){
+      console.error("Erro ao tentar enviar dados para o servidor:", error);
+
+    }
+    
     try {
       const [aguaCheio, aguaVazio, gasCheio, gasVazio] = await Promise.all([
         EstoqueAguaCheio(),
@@ -170,8 +173,6 @@ export const Dashboard = () => {
       console.error("Erro ao recuperar o estoque:", error);
     }
   };
-
-  
 
   useEffect(() => {
     setSaldoTotal(totalGas + totalAgua);
@@ -210,6 +211,15 @@ export const Dashboard = () => {
     event.preventDefault();
 
     try {
+      const response2 = await api.post("/notas", {
+        observacoes: `Venda de ${quantity} ${venda} no ${paymentMethod}, ${observation} `,
+      });
+      console.log("Enviado com sucesso", response2);
+    } catch (error) {
+      console.error("Não foi possível enviar para o servidor", error);
+    }
+
+    try {
       const response = await api.post("/sell", {
         venda,
         paymentMethod,
@@ -234,8 +244,9 @@ export const Dashboard = () => {
         produto: vendaStock,
         quantity: quantityStock,
       });
+
       console.log("enviado com sucesso", response);
-      await fetchEstoque;
+      await fetchEstoque();
     } catch (error) {
       console.log("Não foi possível enviar o estoque para o servidor", error);
     }
@@ -243,17 +254,23 @@ export const Dashboard = () => {
     setIsEstoqueModalOpen(false);
   };
 
-
   const handleModalSaldo = async (event) => {
     event.preventDefault();
-  
+    try {
+      const response2 = await api.post("/notas", {
+        observacoes: `Alteração no caixa de: R$ ${saldoValue}, causa => ${observacaoSaldo}`,
+      });
+    } catch (error) {
+      console.error("Erro ao enviar os dados para o servidor", error);
+    }
+
     try {
       const response = await api.post("/saldo", {
         valores: saldoValue,
         observacao: observacaoSaldo,
       });
       console.log("Enviado com sucesso", response);
-  
+
       // Atualize o saldo total após adicionar
       setSaldoTotal((prevSaldo) => prevSaldo + parseFloat(saldoValue)); // Atualiza o saldo total
     } catch (error) {
@@ -264,54 +281,15 @@ export const Dashboard = () => {
 
   const handleSubmitEstoque = async (event) => {
     event.preventDefault();
-    // Lógica para adicionar estoque
-    // ...
+
     setIsEstoqueModalOpen(false);
-  };
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/");
-    window.location.reload();
-  };
-
-  const handleAddNote = () => {
-    if (newNote) {
-      if (editingNoteIndex !== null) {
-        const updatedNotes = [...notes];
-        updatedNotes[editingNoteIndex] = newNote;
-        setNotes(updatedNotes);
-        setEditingNoteIndex(null);
-      } else {
-        setNotes([...notes, newNote]);
-      }
-      setNewNote("");
-    }
-  };
-
-  const handleEditNote = (index) => {
-    setNewNote(notes[index]);
-    setEditingNoteIndex(index);
-  };
-
-  const handleDeleteNote = (index) => {
-    const updatedNotes = notes.filter((_, i) => i !== index);
-    setNotes(updatedNotes);
   };
 
   const currentDate = new Date().toLocaleDateString();
 
   return (
     <Container>
-      <Header>
-        Dashboard de Depósito de Gás
-        <Flex style={{ gap: "50px" }}>
-          <LogoutButton onClick={handleLogout} style={{ marginRight: "30px" }}>
-            <FaSignOutAlt />
-            Logout
-          </LogoutButton>
-        </Flex>
-      </Header>
+      <Header />
       <Board>
         <h2 style={{ textAlign: "center" }}>{currentDate}</h2>
         <Balance>
@@ -373,35 +351,7 @@ export const Dashboard = () => {
           <Button onClick={handleOpenSaldoModal}>Adicionar Saldo</Button>
         </SectionButton>
 
-        <NotesSection>
-          <h2>Observações Importantes</h2>
-          <ModalField>
-            <ModalInput
-              type="text"
-              placeholder="Adicionar nova observação..."
-              value={newNote}
-              onChange={(e) => setNewNote(e.target.value)}
-            />
-            <ModalButton type="button" onClick={handleAddNote}>
-              {editingNoteIndex !== null ? "Atualizar" : "Adicionar"}
-            </ModalButton>
-          </ModalField>
-          {notes.length === 0 ? (
-            <p>Nenhuma observação adicionada.</p>
-          ) : (
-            notes.map((note, index) => (
-              <Note key={index}>
-                {note}
-                <EditButton onClick={() => handleEditNote(index)}>
-                  Editar
-                </EditButton>
-                <DeleteButton onClick={() => handleDeleteNote(index)}>
-                  Deletar
-                </DeleteButton>
-              </Note>
-            ))
-          )}
-        </NotesSection>
+        <BoardNotas />
       </Board>
 
       {/* Modal para adicionar venda */}
@@ -500,6 +450,14 @@ export const Dashboard = () => {
                   required
                 />
               </ModalField>
+              <ModalField>
+                <ModalLabel htmlFor="saldoObs">Observação: </ModalLabel>
+                <ModalInput
+                  type="text"
+                  id="EstoqueObs"
+                  onChange={(e) => setObservacaoEstoque(e.target.value)}
+                />
+              </ModalField>
               <ModalButton type="submit" onClick={handleModalStockSubmit}>
                 Adicionar
               </ModalButton>
@@ -546,7 +504,7 @@ export const Dashboard = () => {
         </ModalOverlay>
       )}
 
-      <Footer>&copy; 2024 Vitório Corrêa</Footer>
+      <Footer />
     </Container>
   );
 };

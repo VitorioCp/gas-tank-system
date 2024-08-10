@@ -7,6 +7,7 @@ const FormController = require("./controllers/form.router");
 const SellController = require("./controllers/sell.router.js");
 const StockController = require("./controllers/stock.router.js");
 const SaldoController = require("./controllers/saldo.router.js");
+const NotasController = require("./controllers/notas.router.js");
 
 //userController
 const userController = new UserController();
@@ -47,11 +48,20 @@ router.get("/stock", verificarToken, (req, res) => stockController.getAll(req,re
 
 
 //Saldo -> Onde sera armazenado variaveis no valor do caixa podendo ser de adição e subtração
-
 const saldoController = new SaldoController();
 
 router.post("/saldo", verificarToken, (req, res) => saldoController.create(req,res) )
 router.get("/saldo", verificarToken, (req, res) => saldoController.getAll(req,res) )
+
+//Notas -> Armazenamento de observações
+
+const notasController = new NotasController();
+
+router.post("/notas", verificarToken, (req, res) =>notasController.create(req,res))
+router.get("/notas", verificarToken, (req, res) =>notasController.getAll(req,res))
+router.put("/notas/:id", verificarToken, (req,res) => notasController.put(req,res))
+router.delete("/notas/:id", verificarToken, (req,res) => notasController.delete(req,res))
+
 
 
 //verify-token

@@ -10,7 +10,7 @@ export const Container = styled.div`
   justify-content: space-between;
 `;
 
-export const Header = styled.header`
+export const HeaderDashboard = styled.header`
   width: 100%;
   padding: 20px;
   background-color: #333333; /* Tom escuro */
@@ -36,6 +36,22 @@ export const LogoutButton = styled.button`
 
   &:hover {
     color: #ff0000; /* Vermelho ao passar o mouse */
+  }
+`;
+
+export const ConfigButton = styled.button`
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: color 0.2s;
+
+  &:hover {
+    color: green; /* Vermelho ao passar o mouse */
   }
 `;
 
@@ -137,7 +153,7 @@ export const Button = styled.button`
   }
 `;
 
-export const Footer = styled.footer`
+export const FooterDashboard = styled.footer`
   width: 100%;
   padding: 20px;
   background-color: #333333; /* Tom escuro */
