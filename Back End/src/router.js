@@ -62,7 +62,11 @@ router.get("/notas", verificarToken, (req, res) =>notasController.getAll(req,res
 router.put("/notas/:id", verificarToken, (req,res) => notasController.put(req,res))
 router.delete("/notas/:id", verificarToken, (req,res) => notasController.delete(req,res))
 
+//Estoque total -> Será armazenado o estoque total
 
+const stockTotalController = new StrockTotalController()
+
+router.post("/stocktotal", verificarToken, (req, res) => stockTotalController.create(req,res))
 
 //verify-token
 
