@@ -1,0 +1,45 @@
+li {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px;
+  align-items: center;
+  height: 2.5rem;
+}
+
+li div {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: center;
+}
+li div button {
+  align-items: center;
+  justify-content: center;
+  border-radius: 5px;
+  background: rgb(144, 141, 141);
+  width: 6rem;
+  height: 1.5rem;
+  border: 1px solid black;
+}
+
+.boardNote{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+}
+
+.boardNote input{
+    width: 12rem;
+    height: 2rem;
+}
+
+.boardNote button{
+    font-size: 1rem !important;   
+     height: 2rem;
+     text-align: center;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+
+}

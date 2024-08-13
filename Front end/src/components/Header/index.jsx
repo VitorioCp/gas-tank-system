@@ -8,9 +8,34 @@ import {
   ModalField,
   ModalLabel,
   ModalInput,
-  ModalButton,
+  Button,
 } from "../../pages/dashboard/styles";
+import { SectionButton} from "./style.js"
 import "./style.css";
+import axios from "axios";
+import { stockTotal } from "../Estoque/index.jsx";
+
+//Authenticated Bd
+const api = axios.create({
+  baseURL: "http://localhost:3333",
+});
+
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+
+
+
 export const Header = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [stockTotalGas , setStockTotalGas] = useState(0)
@@ -26,14 +51,19 @@ export const Header = () => {
     setIsModalOpen(!isModalOpen);
   };
 
+
   const handleSubmitStockTotal = async(event) => {
     event.preventDefault();
+    console.log("Chegou aqui")
 
     try{
       const response = await api.post("/stocktotal",{
         totalgas: stockTotalGas,
         totalagua: stockTotalAgua
-      })
+      }) 
+      console.log("Enviado com sucesso", response.data)
+      setIsModalOpen(!isModalOpen);
+      
     }catch(error){
       console.error("Erro ao tentar enviar os dados para o servidor", error)
     }
@@ -73,8 +103,10 @@ export const Header = () => {
                 onChange={(e) => setStockTotalAgua(e.target.value)}
               />
             </ModalField>
-            <ModalButton onClick={handleSubmitStockTotal}>Salvar</ModalButton>
-            <ModalButton onClick={toggleModal}>Fechar</ModalButton>
+            <SectionButton>
+            <Button onClick={handleSubmitStockTotal}>Salvar</Button>
+            <Button onClick={toggleModal}>Fechar</Button>
+            </SectionButton>
           </div>
         </div>
       )}

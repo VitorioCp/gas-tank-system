@@ -148,14 +148,16 @@ export const Dashboard = () => {
   };
 
   const fetchEstoque = async () => {
-    
-    try{
-      const response2 = await api.post("/notas",{
-        observacoes: `Alteração no estoque de ${vendaStock} quantidade ${quantityStock}, motivo -> ${observacaoEstoque}`
-      })
-    } catch(error){
-      console.error("Erro ao tentar enviar dados para o servidor:", error);
-
+      
+    if (isEstoqueModalOpen) {
+      try {
+        const response2 = await api.post("/notas", {
+          observacoes: `Alteração no estoque de ${vendaStock} quantidade ${quantityStock}, motivo -> ${observacaoEstoque}`
+        });
+        console.log("Dados enviados com sucesso:", response2.data);
+      } catch (error) {
+        console.error("Erro ao tentar enviar dados para o servidor:", error);
+      }
     }
     
     try {
@@ -173,7 +175,7 @@ export const Dashboard = () => {
       console.error("Erro ao recuperar o estoque:", error);
     }
   };
-
+  
   useEffect(() => {
     setSaldoTotal(totalGas + totalAgua);
   }, [totalGas, totalAgua]);

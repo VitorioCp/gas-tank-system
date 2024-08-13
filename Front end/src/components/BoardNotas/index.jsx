@@ -7,7 +7,7 @@ import {
   ModalLabel,
 } from "../../pages/dashboard/styles";
 import axios from "axios";
-
+import "./style.css";
 const api = axios.create({
   baseURL: "http://localhost:3333",
 });
@@ -89,7 +89,8 @@ export const BoardNotas = () => {
     <div>
       <h2>Observações</h2>
 
-      <ModalForm onSubmit={handleSubmitNotas}>
+      <ModalForm  onSubmit={handleSubmitNotas}>
+        <div className="boardNote">
         <ModalField>
           <ModalLabel htmlFor="obs">Observação: </ModalLabel>
           <ModalInput
@@ -102,16 +103,19 @@ export const BoardNotas = () => {
         <ModalButton type="submit">
           {editId ? "Atualizar Obs" : "Adicionar Obs"}
         </ModalButton>
+        </div>
       </ModalForm>
 
-      <div>Lista de Observações</div>
+      <h3>Lista de Observações</h3>
 
       <ul>
         {observacoes.map((obs) => (
           <li key={obs.id}>
             {obs.observacoes}
-            <button onClick={() => handleEdit(obs)}>Editar</button>
-            <button onClick={() => handleDelete(obs.id)}>Deletar</button>
+            <div className="btnDivision">
+              <button onClick={() => handleEdit(obs)}>Editar</button>
+              <button onClick={() => handleDelete(obs.id)}>Deletar</button>
+            </div>
           </li>
         ))}
       </ul>

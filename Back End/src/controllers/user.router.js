@@ -15,6 +15,8 @@ class UserController {
       const newUser = await User.create({ email, login, password });
       res.status(201).json(newUser);
     }
+
+    
   }
   
   module.exports = UserController;

@@ -18,4 +18,8 @@
     border-radius: 5px;
     text-align: center;
   }
+
+  .modal-content h3{
+    margin-bottom: 20px;
+  }
   

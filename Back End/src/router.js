@@ -8,6 +8,7 @@ const SellController = require("./controllers/sell.router.js");
 const StockController = require("./controllers/stock.router.js");
 const SaldoController = require("./controllers/saldo.router.js");
 const NotasController = require("./controllers/notas.router.js");
+const StrockTotalController = require("./controllers/stocktotal.router.js");
 
 //userController
 const userController = new UserController();
@@ -67,6 +68,9 @@ router.delete("/notas/:id", verificarToken, (req,res) => notasController.delete(
 const stockTotalController = new StrockTotalController()
 
 router.post("/stocktotal", verificarToken, (req, res) => stockTotalController.create(req,res))
+router.get("/stocktotal", verificarToken, (req, res) => stockTotalController.getAll(req,res))
+
+
 
 //verify-token
 
