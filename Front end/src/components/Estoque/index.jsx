@@ -48,8 +48,8 @@ const dadosStockTotal = async () => {
 };
 
 // Estoque total
-let totalEstoqueGalao = 75;
 let totalEstoqueGas = 181;
+let totalEstoqueGalao = 75;
 
 export const stockTotal = async () => {
   const stocktotal = await dadosStockTotal();
@@ -72,7 +72,9 @@ export const stockTotal = async () => {
   };
 };
 const { totalGas, totalAgua } = await stockTotal();
-(totalEstoqueGalao = totalGas), (totalEstoqueGas = totalAgua);
+
+totalEstoqueGas = totalGas || 181 ;
+totalEstoqueGalao = totalAgua || 75;
 
 // Funções Gás
 export const EstoqueGasCheio = async () => {

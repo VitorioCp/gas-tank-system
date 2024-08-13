@@ -48,6 +48,7 @@ import { SaldoTotal } from "../../components/SaldoTotal";
 import { Header } from "../../components/Header";
 import { Footer } from "../../components/Footer";
 import { BoardNotas } from "../../components/BoardNotas";
+import { DataDashboard } from "../../components/DataDashboard";
 
 // Configuração do Axios para incluir token
 const api = axios.create({
@@ -90,7 +91,7 @@ export const Dashboard = () => {
   const [quantityStock, setQuantityStock] = useState(0);
   const [saldoValue, setSaldoValue] = useState(0);
   const [observacaoSaldo, setObservacaoSaldo] = useState("");
-  const [observacaoEstoque ,setObservacaoEstoque] = useState("")
+  const [observacaoEstoque, setObservacaoEstoque] = useState("");
 
   const navigate = useNavigate();
 
@@ -148,18 +149,17 @@ export const Dashboard = () => {
   };
 
   const fetchEstoque = async () => {
-      
     if (isEstoqueModalOpen) {
       try {
         const response2 = await api.post("/notas", {
-          observacoes: `Alteração no estoque de ${vendaStock} quantidade ${quantityStock}, motivo -> ${observacaoEstoque}`
+          observacoes: `Alteração no estoque de ${vendaStock} quantidade ${quantityStock}, motivo -> ${observacaoEstoque}`,
         });
         console.log("Dados enviados com sucesso:", response2.data);
       } catch (error) {
         console.error("Erro ao tentar enviar dados para o servidor:", error);
       }
     }
-    
+
     try {
       const [aguaCheio, aguaVazio, gasCheio, gasVazio] = await Promise.all([
         EstoqueAguaCheio(),
@@ -175,7 +175,7 @@ export const Dashboard = () => {
       console.error("Erro ao recuperar o estoque:", error);
     }
   };
-  
+
   useEffect(() => {
     setSaldoTotal(totalGas + totalAgua);
   }, [totalGas, totalAgua]);
@@ -287,13 +287,11 @@ export const Dashboard = () => {
     setIsEstoqueModalOpen(false);
   };
 
-  const currentDate = new Date().toLocaleDateString();
-
   return (
     <Container>
       <Header />
       <Board>
-        <h2 style={{ textAlign: "center" }}>{currentDate}</h2>
+        <DataDashboard />
         <Balance>
           <SaldoTotal saldoTotal={saldoTotal} />{" "}
         </Balance>
@@ -346,13 +344,11 @@ export const Dashboard = () => {
             <SalesNumber>{estoqueAguaVazio}</SalesNumber>
           </SalesInfo>
         </SalesSection>
-
         <SectionButton>
           <Button onClick={handleOpenModal}>Adicionar Venda</Button>
           <Button onClick={handleOpenEstoqueModal}>Adicionar Estoque</Button>
           <Button onClick={handleOpenSaldoModal}>Adicionar Saldo</Button>
         </SectionButton>
-
         <BoardNotas />
       </Board>
 
