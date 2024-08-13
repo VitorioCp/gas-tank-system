@@ -61,8 +61,11 @@ export const Header = () => {
         totalgas: stockTotalGas,
         totalagua: stockTotalAgua
       }) 
+      
       console.log("Enviado com sucesso", response.data)
       setIsModalOpen(!isModalOpen);
+      window.location.reload();
+
       
     }catch(error){
       console.error("Erro ao tentar enviar os dados para o servidor", error)
