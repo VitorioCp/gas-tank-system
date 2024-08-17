@@ -48,7 +48,6 @@ import { SaldoTotal } from "../../components/SaldoTotal";
 import { Header } from "../../components/Header";
 import { Footer } from "../../components/Footer";
 import { BoardNotas } from "../../components/BoardNotas";
-import { DataDashboard } from "../../components/DataDashboard";
 
 // Configuração do Axios para incluir token
 const api = axios.create({
@@ -291,7 +290,6 @@ export const Dashboard = () => {
     <Container>
       <Header />
       <Board>
-        <DataDashboard />
         <Balance>
           <SaldoTotal saldoTotal={saldoTotal} />{" "}
         </Balance>

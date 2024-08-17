@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Container, FormWrapper, Title, Form, SuccessMessage, ErrorMessage, Label, Input, SubmitButton, BackToLoginButton } from "./style";
 
 export function Cadastro() {
   const [login, setLogin] = useState("");
@@ -33,60 +34,51 @@ export function Cadastro() {
   }
 
   return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "100vh", backgroundColor: "#f7fafc" }}>
-      <div style={{ backgroundColor: "#fff", padding: "2rem", borderRadius: "0.5rem", boxShadow: "0 2px 10px rgba(0, 0, 0, 0.1)", width: "100%", maxWidth: "400px" }}>
-        <h2 style={{ fontSize: "1.5rem", fontWeight: "bold", marginBottom: "1.5rem", textAlign: "center", color: "#2d3748" }}>Cadastro</h2>
-        <form onSubmit={handleCadastro} style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-          {success && (
-            <p style={{ color: "#38a169" }}>Cadastro realizado com sucesso!</p>
-          )}
-          {error && <p style={{ color: "#e53e3e" }}>{error}</p>}
+    <Container>
+      <FormWrapper>
+        <Title>Cadastro</Title>
+        <Form onSubmit={handleCadastro}>
+          {success && <SuccessMessage>Cadastro realizado com sucesso!</SuccessMessage>}
+          {error && <ErrorMessage>{error}</ErrorMessage>}
           <div>
-            <label htmlFor="login" style={{ display: "block", color: "#4a5568", fontWeight: "500", marginBottom: "0.25rem" }}>Login</label>
-            <input
+            <Label htmlFor="login">Login</Label>
+            <Input
               type="text"
               id="login"
               name="login"
               placeholder="Login"
               onChange={(e) => setLogin(e.target.value)}
               value={login}
-              style={{ width: "100%", padding: "0.5rem", border: "1px solid #cbd5e0", borderRadius: "0.375rem", outline: "none", transition: "border-color 0.2s", boxShadow: "inset 0 1px 2px rgba(0, 0, 0, 0.1)" }}
             />
           </div>
           <div>
-            <label htmlFor="email" style={{ display: "block", color: "#4a5568", fontWeight: "500", marginBottom: "0.25rem" }}>Email</label>
-            <input
+            <Label htmlFor="email">Email</Label>
+            <Input
               type="email"
               id="email"
               name="email"
               placeholder="Email"
               onChange={(e) => setEmail(e.target.value)}
               value={email}
-              style={{ width: "100%", padding: "0.5rem", border: "1px solid #cbd5e0", borderRadius: "0.375rem", outline: "none", transition: "border-color 0.2s", boxShadow: "inset 0 1px 2px rgba(0, 0, 0, 0.1)" }}
             />
           </div>
           <div>
-            <label htmlFor="password" style={{ display: "block", color: "#4a5568", fontWeight: "500", marginBottom: "0.25rem" }}>Password</label>
-            <input
+            <Label htmlFor="password">Password</Label>
+            <Input
               type="password"
               id="password"
               name="password"
               placeholder="Password"
               onChange={(e) => setPassword(e.target.value)}
               value={password}
-              style={{ width: "100%", padding: "0.5rem", border: "1px solid #cbd5e0", borderRadius: "0.375rem", outline: "none", transition: "border-color 0.2s", boxShadow: "inset 0 1px 2px rgba(0, 0, 0, 0.1)" }}
             />
           </div>
-          <button
-            type="submit"
-            style={{ width: "100%", padding: "0.5rem", backgroundColor: "#3182ce", color: "#fff", fontWeight: "600", borderRadius: "0.375rem", border: "none", cursor: "pointer", transition: "background-color 0.2s" }}
-            onMouseOver={(e) => e.currentTarget.style.backgroundColor = "#2b6cb0"}
-            onMouseOut={(e) => e.currentTarget.style.backgroundColor = "#3182ce"}
-          >
-            Cadastrar
-          </button>
-        </form>
-      </div>
-    </div>
+          <SubmitButton type="submit">Cadastrar</SubmitButton>
+          <BackToLoginButton onClick={() => navigate("/")}>
+            Voltar para Login
+          </BackToLoginButton>
+        </Form>
+      </FormWrapper>
+    </Container>
   );
 }

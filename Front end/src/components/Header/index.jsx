@@ -14,6 +14,7 @@ import { SectionButton} from "./style.js"
 import "./style.css";
 import axios from "axios";
 import { stockTotal } from "../Estoque/index.jsx";
+import { useNavigate } from "react-router-dom";
 
 //Authenticated Bd
 const api = axios.create({
@@ -37,6 +38,7 @@ api.interceptors.request.use(
 
 
 export const Header = () => {
+  const navigate = useNavigate()
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [stockTotalGas , setStockTotalGas] = useState(0)
   const[stockTotalAgua, setStockTotalAgua] = useState(0)
